@@ -1,4 +1,5 @@
 const { GraphQLServer } = require('graphql-yoga');
+const app = require('express');
 const path = require('path');
 const resolvers = require('./resolvers');
 const mongoose = require('mongoose');
@@ -14,6 +15,9 @@ const server = new GraphQLServer({
     typeDefs: path.resolve(__dirname, 'schema.graphql'),
     resolvers
 })
+
+server.applyMiddleware({ app });
+app.use(cors());
 
 const opts = {
   port: 4000,
