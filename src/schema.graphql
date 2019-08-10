@@ -1,0 +1,15 @@
+type Tale {
+    id: ID!
+    title: String!
+    text: String!
+}
+
+
+type Query {
+    tales: [Tale!]!
+    tale(id: ID!): Tale
+}
+
+type Mutation {
+    createTale(title: String!, text: String!): Tale
+}
