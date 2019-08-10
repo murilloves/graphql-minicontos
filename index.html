@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Vanilla GraphQL</title>
+</head>
+
+<body>
+  <form id="tale-search">
+    <input type="text" id="search" name="search" placeholder="Search..." autocomplete="off" />
+    <button type="submit">Enter</button>
+  </form>
+  <div id="tale-container"></div>
+</body>
+
+</html>
+
+
+
+<script>
+const taleContainer = document.querySelector("#tale-container");
+const form = document.querySelector("#tale-search");
+
+const getTalesQuery = () => `{ tales { id title text } }`;
+
+const renderTales = ({ data }) => {
+  const { allTales = [] } = data;
+
+  while (taleContainer.firstChild) {
+    taleContainer.removeChild(taleContainer.firstChild);
+  }
+
+  const taleFragment = document.createDocumentFragment();
+  const talesList = document.createElement('ul');
+
+  allTales.forEach((tale) => {
+    const talesListItem = document.createElement('li');
+    talesListItem.textContent = `${tale.title} - ${tale.text}`;
+    talesList.appendChild(talesListItem);
+  });
+
+  taleFragment.appendChild(talesList);
+  taleContainer.appendChild(taleFragment);
+}
+
+const loadTales = (ev) => {
+  ev.preventDefault();
+  const keyword = form.elements["search"].value;
+
+  const options = {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      query: getTalesQuery(keyword)
+    })
+  };
+
+  fetch(`https://git.heroku.com/minicontos.git`, options)
+    .then(res => res.json())
+    .then(renderTales);
+
+  form.reset();
+}
+
+form.addEventListener("submit", loadTales)
+</script>
